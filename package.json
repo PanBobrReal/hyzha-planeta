@@ -1,0 +1,9 @@
+{
+  "name": "hyzha-planeta-online",
+  "version": "1.0.0",
+  "description": "Хижа Планета (Not Alone) — онлайн для 2-7 гравців",
+  "main": "server.js",
+  "scripts": { "start": "node server.js", "test": "node tests/bots.js 3 10" },
+  "engines": { "node": ">=18" },
+  "license": "UNLICENSED"
+}
