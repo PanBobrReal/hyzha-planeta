@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="uk"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Хижа Планета — онлайн</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0b1d26;--bg2:#12303b;--ink:#e6f4f1;--dim:#8fb3b0;--aq:#4be3cf;--vi:#b57bff;--red:#ff6b7f;--gold:#ffd166;--line:#245564;color-scheme:dark}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(1200px 600px at 20% -10%,#17434f,transparent),var(--bg);color:var(--ink);font:16px/1.4 'Exo 2',system-ui,sans-serif;min-height:100vh}
+button{font:inherit;color:var(--ink);background:var(--bg2);border:1px solid var(--line);border-radius:8px;padding:.5em .9em;cursor:pointer}
+button:hover:not(:disabled){border-color:var(--aq)}button:disabled{opacity:.4;cursor:default}button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--aq);outline-offset:2px}
+button.pri{background:var(--aq);color:#04201c;border-color:var(--aq);font-weight:800}
+input,select{font:inherit;color:var(--ink);background:#0a2530;border:1px solid var(--line);border-radius:8px;padding:.55em .8em;width:100%}
+h1{font-weight:800;font-size:clamp(2.2rem,8vw,4rem);letter-spacing:.04em;margin:.2em 0;background:linear-gradient(90deg,var(--aq),var(--vi));-webkit-background-clip:text;background-clip:text;color:transparent}
+h3{margin:.2em 0 .5em;font-size:1rem;color:var(--aq)}
+.home{max-width:420px;margin:8vh auto;padding:20px;display:grid;gap:12px}.sub{color:var(--dim);margin:0}.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.row>*{flex:1}.or{color:var(--dim);text-align:center}
+.wrap{max-width:1100px;margin:0 auto;padding:12px;display:grid;gap:12px}
+.box{background:rgba(18,48,59,.8);border:1px solid var(--line);border-radius:12px;padding:12px}
+.top{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center}
+.ph{font-weight:800;font-size:1.15rem}
+.trk{display:grid;gap:6px}.trk div.l{display:flex;gap:3px;align-items:center}.trk b{width:9em;font-weight:600;font-size:.85rem}
+.seg{flex:1;height:18px;border-radius:4px;background:#0a2530;border:1px solid var(--line);font-size:.65rem;text-align:center;line-height:16px;color:var(--dim)}
+.seg.on.r{background:var(--aq);border-color:var(--aq);color:#04201c}.seg.on.a{background:var(--vi);border-color:var(--vi);color:#1d0b33}
+.board{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.tile{position:relative;height:104px;border:1px solid var(--line);border-radius:10px;background:linear-gradient(160deg,#16424f,#0e2a35);padding:10px;text-align:left;display:flex;flex-direction:column;justify-content:flex-start;align-items:flex-start;gap:2px;width:100%}
+.tile.sel{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold) inset}.tile .n{color:var(--dim);font-size:.8rem}.tile .t{font-weight:800}.tile small{display:block;color:var(--dim);font-size:.72rem;line-height:1.2;margin-top:auto}
+.tk{position:absolute;right:6px;top:6px;display:flex;gap:3px;font-size:1.2rem}
+.pl{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px}
+.pc{border:1px solid var(--line);border-radius:10px;padding:8px;background:#0e2a35}.pc.me{border-color:var(--aq)}
+.pip{display:inline-block;width:12px;height:12px;border-radius:50%;background:var(--red);margin-right:3px}.pip.e{background:transparent;border:1px solid var(--red)}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{padding:.35em .6em;border-radius:8px;border:1px solid var(--line);background:#0a2530;font-size:.9rem;cursor:pointer;text-align:left}
+.chip.s{border-color:var(--gold);background:#3a3216}.chip.d{cursor:default;color:var(--dim)}
+.cd{border:1px solid var(--vi);background:#241a3a}.cd.h{border-color:var(--red);background:#3a1a24}
+.msg{background:#2a2410;border:1px solid var(--gold);border-radius:10px;padding:14px;display:grid;gap:12px}
+.log{max-height:220px;overflow:auto;font-size:.88rem;color:var(--dim);display:grid;gap:2px}.log p,.clg p{margin:0}.clg p{color:var(--gold)}
+.tag{font-size:.75rem;color:var(--dim)}.ok{color:var(--aq)}
+#toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--red);color:#2b0710;padding:.6em 1em;border-radius:10px;font-weight:600;display:none;z-index:9;max-width:90vw}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;align-items:stretch}
+.card{height:100%;display:flex;flex-direction:column;justify-content:flex-start;gap:8px;border:1px solid var(--vi);background:#241a3a;border-radius:10px;padding:12px;min-height:140px}
+.card.h{border-color:var(--red);background:#3a1a24}.card.sv{border-color:var(--aq);background:#0f3338}
+.card .ct{display:flex;justify-content:space-between;gap:8px;align-items:baseline}.card .x{flex:1;font-size:.85rem;color:var(--dim)}.card button{align-self:flex-start}
+.btns{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.sec{display:grid;gap:10px}.act{display:grid;gap:16px}
+.banner{border-radius:12px;padding:14px 16px;font-weight:800;font-size:1.15rem;border:2px solid var(--line);background:#0e2a35;color:var(--dim)}
+.banner.me{border-color:var(--aq);background:#0f4a47;color:#fff}.banner small{display:block;font-weight:400;font-size:.88rem;margin-top:2px;color:inherit;opacity:.85}
+details summary{cursor:pointer;color:var(--aq);font-weight:600}details .log{margin-top:8px}.help{display:grid;gap:4px;font-size:.88rem;color:var(--dim);margin-top:8px}
+.board{grid-auto-rows:1fr}
+.tile{height:100%;min-height:172px;padding:10px 10px 8px}.tile small{margin-top:0}
+.dsc{font-size:.74rem;color:var(--dim);line-height:1.25;margin-top:2px}.tile .rs{font-size:.72rem;color:var(--gold)}
+.whos{margin-top:auto;display:flex;gap:4px;flex-wrap:wrap;padding-top:6px}.who{font-size:.74rem;font-weight:800;padding:1px 8px;border-radius:999px;background:var(--c);color:#111}
+.lc{width:150px;height:46px;display:flex;align-items:center;justify-content:center;text-align:center;padding:0 8px}
+.chips.eq{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr))}.chips.eq .chip{min-height:54px;display:flex;align-items:center}
+.danger{border-color:var(--red);color:var(--red)}.menu{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.trackrow{display:grid;grid-template-columns:repeat(32,1fr);padding:2px}.trackrow .seg{position:relative;width:calc(100% - 8px);height:auto;aspect-ratio:1;margin:4px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.05rem;font-weight:800;line-height:1;border-width:2px}
+.seg.L{border-color:#3b8fb0;background:#0d3346;color:#9fd8f2}.seg.A{border-color:#3be08f;background:#0d3b2c;color:#7dffc0}
+.seg.S{border-color:var(--gold);background:#4a3a10;color:var(--gold)}.seg.R{border-color:#c4566a;background:#3a1522;color:#ffb3c0}
+.tkn{position:absolute;inset:18%;border-radius:50%;border:2px solid #fff;z-index:1}.tkn.rt{background:var(--aq)}.tkn.at{background:var(--vi)}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:.85rem;color:var(--dim)}.legend i{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:5px;border:2px solid #fff;vertical-align:-1px}
+.dsc{flex:1}.rs{margin-top:6px}.whos{margin-top:0;min-height:26px}
+.tile.off{opacity:.5;filter:saturate(.45)}.tile.off .rs{color:var(--dim)}
+.sm{padding:.15em .55em;font-size:.8rem;margin-left:6px}
+@media(max-width:700px){.tile{height:auto;min-height:84px;padding:6px}.tile .t{font-size:.8rem}.dsc{display:none}.lc{width:calc(50% - 4px)}.trackrow .seg{width:calc(100% - 2px);margin:1px;font-size:.55rem;border-width:1px}.trk b{width:5.5em}}
+@media(prefers-reduced-motion:no-preference){.tile{transition:border-color .15s}}
+</style></head><body><div id="app"></div><div id="toast" role="alert"></div>
+<script>
+const $=s=>document.querySelector(s),esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let ses=JSON.parse(localStorage.hp||'null'),S=null,es=null,ui={};
+const qroom=()=>(new URLSearchParams(location.search).get('room')||'').toUpperCase();
+const parseCode=t=>{const m=/room=([A-Za-z]{4})/.exec(t);return (m?m[1]:t).toUpperCase().replace(/[^A-Z]/g,'').slice(0,4)};
+const COL=['#ff9f6b','#6bd0ff','#d79bff','#ffe36b','#7dffa8','#ff7b9c'];
+function goHome(){if(es)es.close();localStorage.removeItem('hp');ses=null;S=null;ui={};history.replaceState(null,'','/');home()}
+function toast(t){const e=$('#toast');e.textContent=t;e.style.display='block';clearTimeout(toast.t);toast.t=setTimeout(()=>e.style.display='none',3500)}
+async function post(a,x={}){const r=await fetch('/api',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({a,room:ses&&ses.room,pid:ses&&ses.pid,tk:ses&&ses.tk,...x})});const j=await r.json();if(j.err)toast(j.err);return j}
+function connect(){if(es)es.close();es=new EventSource(`/events?room=${ses.room}&pid=${ses.pid}&tk=${ses.tk}`);es.onmessage=e=>{S=JSON.parse(e.data);render()};es.addEventListener('bad',goHome);es.addEventListener('closed',()=>{toast('Господар закрив кімнату');goHome()})}
+function home(){$('#app').innerHTML=`<div class="home"><h1>ХИЖА ПЛАНЕТА</h1><p class="sub">Онлайн-версія гри Гіслена Массона · 2–7 гравців</p>
+<input id="nm" placeholder="Ваше ім'я" maxlength="16" value="${esc(localStorage.hpn||'')}">
+<button class="pri" data-a="create">Створити кімнату</button><div class="or">або приєднайтесь до друзів</div>
+<input id="rc" placeholder="Код кімнати або посилання" autocomplete="off" value="${esc(qroom())}"><button data-a="join">Приєднатись</button></div>`}
+async function enter(a){const name=$('#nm').value.trim();localStorage.hpn=name;const j=await post(a,{name,room:a==='join'?parseCode($('#rc').value):undefined,pid:undefined,tk:undefined});if(j.ok){ses={room:j.room,pid:j.pid,tk:j.tk};localStorage.hp=JSON.stringify(ses);history.replaceState(null,'','?room='+j.room);connect()}}
+const nm=id=>(S.players.find(p=>p.id===id)||{name:'?'}).name;
+const LN=n=>S.defs.LOC[n][0];
+function lobby(){const host=S.host===S.me,url=location.origin+'/?room='+S.room;
+$('#app').innerHTML=`<div class="wrap"><div class="top"><h1>ХИЖА ПЛАНЕТА</h1><div class="menu"><button data-a="leave">Вийти з гри</button>${S.host===S.me?'<button class="danger" data-a="close">Закрити кімнату для всіх</button>':''}</div></div><div class="box"><h3>Запросіть гравців: надішліть це посилання</h3><div class="row"><input id="lk" value="${esc(url)}" readonly><button data-a="copy" style="flex:0">Копіювати</button></div><p class="tag">Код кімнати: <b>${S.room}</b> · гравців: ${S.players.length}/7</p></div>
+<div class="box"><h3>Гравці</h3><div class="chips">${S.players.map(p=>`<span class="chip d">${esc(p.name)}${p.id===S.host?' ★':''}${p.on?'':' (не в мережі)'}${S.host===S.me&&p.id!==S.me?`<button class="danger sm" data-a="kick" data-v="${p.id}">✕</button>`:''}</span>`).join('')}</div></div>
+${host?`<div class="box"><h3>Налаштування</h3><div class="row"><select id="cp"><option value="">Істоту оберемо випадково</option>${S.players.map(p=>`<option value="${p.id}" ${S.creaturePick===p.id?'selected':''}>Істота: ${esc(p.name)}</option>`).join('')}</select></div><p><label><input type="checkbox" id="ex" ${S.expert?'checked':''} style="width:auto"> Авторський варіант для досвідчених (після втрати останньої Волі в Розплаті — лише 2 фішки)</label></p><button class="pri" data-a="start" ${S.players.length<2?'disabled':''}>Почати гру</button></div>`:'<p class="tag">Чекаємо, поки господар кімнати почне гру…</p>'}</div>`}
+const need=()=>S.my.mode?2:1;
+function chips(arr,sel,act,cls=''){return `<div class="chips">${arr.map(c=>`<button class="chip lc ${sel&&sel.includes(c)?'s':''} ${cls}" data-a="${act}" data-v="${c}" title="${esc(S.defs.LOC[c][1])}">${c}. ${LN(c)}</button>`).join('')}</div>`}
+function cards(arr,def,act,cls,lbl,can){return `<div class="cards">${arr.map(c=>{const d=S.defs[def][c.k],ok=act&&(!can||can(d));return `<div class="card ${cls}"><div class="ct"><b>${d.name}</b><span class="tag">Фаза ${d.phase}</span></div><div class="x">${d.text}</div>${act?`<button data-a="${act}" data-v="${c.id}" ${ok?'':'disabled'}>${lbl}</button>`:''}</div>`}).join('')}</div>`}
+function trackBar(g){let h='';for(let i=0;i<g.len;i++){let c='seg',l='';
+if(i<6){c+=' L';l=7-i}else if(i<g.a0)c+=' L';else if(i<=g.a1){c+=' A';l='Ⓐ'}else if(i===g.star){c+=' S';l='★'}else if(i<25)c+=' R';else{c+=' R';l=i-23}
+h+=`<div class="${c}" style="grid-column:${i+1}/span 2;grid-row:${i%2+1}">${l}${i===g.rescue?'<i class="tkn rt"></i>':''}${i===g.assim?'<i class="tkn at"></i>':''}</div>`}
+return `<div class="trackrow">${h}</div>`}
+function bar(cls,val,g){let h='';for(let i=1;i<=g.goal;i++)h+=`<div class="seg ${cls} ${i<=val?'on':''}">${cls==='r'&&g.art.includes(i)?'Ⓐ':i===g.goal?'★':''}</div>`;return h}
+function game(){const g=S.g,my=S.my,isC=S.me===g.cid,key=g.turn+g.phase;
+if(ui.key!==key)ui={key,act:'none',res:[],play:[],pend:null,d:{c:null,t:[],a:[]},mode:'c',swap:false,sw:[]};
+const aw=g.await,mine=aw&&(aw.pid===S.me||(aw.kind==='window'&&!isC)),PH={recon:'Фаза 1: Розвідка',hunt:'Фаза 2: Полювання',payoff:'Фаза 3: Розплата',end:'Фаза 4: Кінець ходу',over:'Кінець гри'}[g.phase];
+const tk=g.tokens||(isC&&g.phase==='hunt'?{creature:ui.d.c,target:ui.d.t,artemia:ui.d.a}:null);
+let tiles='';for(let n=1;n<=10;n++){const t=[];if(tk){if(tk.creature===n)t.push('👁');if(tk.target&&tk.target.includes(n))t.push('🎯');(tk.artemia||[]).forEach(a=>{if(a===n)t.push('Ⓐ')})}
+if(n===4&&g.transmitter)t.push('📡');
+const sel=ui.pend&&ui.pend.type==='hybnyi'&&g.tokens&&adjc(g.tokens.creature,n);
+const who=g.order.filter(id=>g.P[id].played&&g.P[id].played.includes(n)).map(id=>`<span class="who" style="--c:${COL[g.order.indexOf(id)%COL.length]}">${esc(nm(id).slice(0,9))}</span>`).join('');
+const act=n<=5||g.reserve[n]<g.copies,hint=isC&&g.phase==='hunt'&&ui.mode==='t'&&g.hunt.need.mirage&&ui.d.t.length===1&&adjc(ui.d.t[0],n);
+tiles+=`<button class="tile ${sel||hint?'sel':''} ${act?'':'off'}" data-a="tile" data-v="${n}" title="${esc(S.defs.LOC[n][1])}${act?'':' (Стане активною, коли хтось візьме цю карту з резерву)'}"><span class="tk">${t.join('')}</span><span class="n">${n}</span><div class="t">${LN(n)}</div><small class="dsc">${esc(S.defs.LOC[n][1])}</small><small class="rs">${n>=6?'Резерв: '+g.reserve[n]+(act?'':' · неактивна'):'&nbsp;'}</small><div class="whos">${who}</div></button>`}
+const on=id=>(S.players.find(p=>p.id===id)||{}).on,kick=id=>S.host===S.me&&id!==S.me?`<button class="danger sm" data-a="kick" data-v="${id}">Видалити</button>`:'';
+const crt=`<div class="pc ${isC?'me':''}"><b>👁 ${esc(nm(g.cid))}</b>${isC?' (ви)':''} <span class="tag">Істота${on(g.cid)?'':' · не в мережі'}</span>${kick(g.cid)}<br><span class="tag">Карт Полювання в руці: ${g.hunt.count} · в колоді: ${g.hunt.deck}</span></div>`;
+const pcs=crt+g.order.map(id=>{const p=g.P[id],i=id===S.me;return `<div class="pc ${i?'me':''}"><b>${esc(nm(id))}</b>${i?' (ви)':''}${p.left?' <span class="tag">(вийшов)</span>':on(id)?'':' <span class="tag">(не в мережі)</span>'}${p.left?'':kick(id)}<br>${[0,1,2].map(k=>`<span class="pip ${k<p.will?'':'e'}"></span>`).join('')} <span class="tag">карт у руці ${p.hand} · Виживання ${p.surv}</span><br><span class="tag">Відбій:</span> ${p.disc.length?p.disc.sort((a,b)=>a-b).map(c=>`<b title="${LN(c)}">${c}</b>`).join(' '):'—'}<br><span class="tag">${g.phase==='recon'?(p.locked?'<span class=ok>✓ обрав'+(p.action==='surrender'?' (поступився)':p.action&&p.action!=='none'?' (опір)':'')+'</span>':'обирає…'):''}${p.played?' Обрано: '+p.played.map(LN).join(' + '):p.n&&g.phase!=='recon'?' Обрано: '+p.n+' карт(и)':''}${p.two&&g.phase==='recon'?' · грає 2 карти':''}</span></div>`}).join('');
+let ctl='';
+if(g.phase==='over'){ctl=`<div class="msg"><h3>${g.over==='astro'?'Астронавтів врятовано! Перемога Астронавтів.':g.over==='abort'?'Гру завершено: гравець вийшов. Нову партію можна почати з лобі.':'Планета асимілювала Астронавтів. Перемога Істоти.'}</h3>${S.host===S.me?'<button class="pri" data-a="again">Нова гра (повернутись до лобі)</button>':'<span class="tag">Господар може почати нову гру.</span>'}</div>`}
+else if(aw&&mine)ctl=prompt(aw);
+else if(aw)ctl='';
+else if(g.phase==='end')ctl=`<div class="msg"><b>Фаза 4: Кінець ходу</b><span class="tag">Карти на полі показують, хто куди пішов. Коли всі будуть готові: розіграні карти підуть у відбій, Істота добере карти Полювання до 3, Порятунок посунеться на 1.</span><div class="btns"><button class="pri" data-a="endready" ${g.endWait.includes(S.me)?'':'disabled'}>Готовий до наступного ходу</button></div><span class="tag">Ще не готові: ${g.endWait.map(id=>esc(nm(id))).join(', ')||'—'}</span></div>`;
+if(g.phase!=='over'&&g.phase!=='end'&&!(mine&&aw.kind!=='window'))ctl+=role(isC,g,my,aw);
+$('#app').innerHTML=`<div class="wrap"><div class="top"><div><span class="ph">Хід ${g.turn} · ${PH}</span> <span class="tag">${isC?'Ви — Істота 👁':'Ви — Астронавт · Істота: '+esc(nm(g.cid))}</span></div><div class="menu"><span class="tag">Кімната ${S.room}</span><button data-a="leave">Вийти з гри</button>${S.host===S.me?'<button class="danger" data-a="close">Закрити кімнату</button>':''}</div></div>
+${banner(g,isC,aw,mine)}${notice(g)}<div class="box trk">${trackBar(g)}<div class="legend"><span><i style="background:var(--aq)"></i>Порятунок: до зірки ${g.star-g.rescue}</span><span><i style="background:var(--vi)"></i>Асиміляція: до зірки ${g.assim-g.star}</span><span>★ — Перемога першого, хто дійде</span></div>${g.bonus&&g.phase!=='over'?'<span class="tag">Порятунок на зеленій поділці Артемії: Істота може додатково розмістити жетон Артемії.</span>':''}</div>
+<div class="board">${tiles}</div><div class="box act">${ctl}</div><div class="pl">${pcs}</div>
+<details class="box" open><summary>Журнал</summary><div class="log" id="lg">${g.log.map(l=>`<p>${esc(l)}</p>`).join('')}</div></details></div>`;
+const lg=$('#lg');if(lg)lg.scrollTop=1e5}
+const adjc=(a,b)=>a&&Math.abs(((a-1)/5|0)-((b-1)/5|0))+Math.abs((a-1)%5-(b-1)%5)===1;
+function notice(g){if(g.phase==='over')return '';let h='';
+if(g.hunt.played.length)h+=`Істота зіграла: <b>${g.hunt.played.map(k=>S.defs.HUNT[k].name).join(', ')}</b>. `;
+if(g.despair)h+='Відчай: до кінця ходу карти Виживання не можна ні грати, ні отримувати. ';
+if(g.despair&&g.phase==='recon')h+='Якщо ви вже обрали локацію — її можна змінити, поки Істота не перейшла до Полювання.';
+return h?`<div class="msg">${h}</div>`:''}
+function banner(g,isC,aw,mine){
+if(g.phase==='over')return '';
+const P=g.P,w=ids=>ids.map(id=>esc(nm(id))).join(', ');let me=false,t='',s='';
+if(aw&&aw.kind==='window'){const wt=g.order.filter(id=>!P[id].ready);
+ if(!isC&&!P[S.me].ready){me=true;t='Ваш хід: карта Виживання або «Готово»';s='Карти відкрито. Можна зіграти Хитрість / Хибний слід.'}else{t='Астронавти вирішують, чи грати карти Виживання';s='Чекаємо: '+w(wt)}}
+else if(aw&&mine){me=true;t='Ваш хід: зробіть вибір нижче'}
+else if(aw){t='Чекаємо на вибір гравця';s=esc(nm(aw.pid))}
+else if(g.phase==='recon'){const wt=g.order.filter(id=>!P[id].locked);
+ if(isC){if(!wt.length){me=true;t='Ваш хід: усі Астронавти обрали локації';s='Зіграйте карту Фази 1 (за бажанням) або перейдіть до Полювання.'}else{t='Астронавти обирають локації';s='Чекаємо: '+w(wt)}}
+ else if(!P[S.me].locked){me=true;t='Ваш хід: оберіть локацію';s='Усі Астронавти обирають одночасно.'}else{t='Ви обрали локацію';s='Чекаємо: '+w(wt)}}
+else if(g.phase==='hunt'){if(isC){me=true;t='Ваш хід: полювання';s='Зіграйте карту (за бажанням) і розставте жетони на полі.'}else{t='Істота полює';s='Чекаємо на її жетони.'}}
+else if(g.phase==='end'){t='Фаза 4: Кінець ходу';if(g.endWait.includes(S.me)){me=true;s='Подивіться результат розплати на полі й натисніть «Готовий».'}else s='Чекаємо: '+w(g.endWait)}
+else t='Розплата…';
+return `<div class="banner ${me?'me':''}" role="status">${t}${s?`<small>${s}</small>`:''}</div>`}
+function role(isC,g,my,aw){let h='';
+if(isC){const need=g.hunt.need,all=g.order.every(id=>g.P[id].locked);
+const can=d=>!aw&&((d.phase===1&&g.phase==='recon')||(d.phase===2&&g.phase==='hunt'))&&g.hunt.played.length<1;
+h+=`<div class="sec"><h3>Ваші карти Полювання (в колоді ще ${g.hunt.deck})</h3>${cards(my.hand,'HUNT','hunt','h','Зіграти',can)}</div>`;
+if(ui.pend&&ui.pend.type==='fobia')h+=`<div class="msg"><b>Фобія:</b> оберіть Астронавта<div class="btns">${g.order.map(id=>`<button data-a="fobia" data-v="${id}">${esc(nm(id))}</button>`).join('')}</div></div>`;
+if(my.clog.length)h+=`<div class="sec clg"><h3>Розвідані дані (бачите лише ви)</h3>${my.clog.map(l=>`<p>${esc(l)}</p>`).join('')}</div>`;
+if(g.phase==='recon')h+=`<div class="btns"><button class="pri" data-a="toHunt" ${all&&!aw?'':'disabled'}>Перейти до Полювання</button></div>`;
+if(g.phase==='hunt'&&!aw){const d=ui.d,nt=need.target?(need.mirage?2:1):0;
+h+=`<div class="sec"><h3>Розставте жетони: оберіть жетон, потім клікніть локацію на полі</h3>${need.mirage?'<p class="tag">Марево: оберіть дві суміжні локації (по горизонталі або вертикалі). Після першого кліку підсвітяться допустимі сусіди.</p>':''}<div class="btns"><button class="chip ${ui.mode==='c'?'s':''}" data-a="mode" data-v="c">👁 Істота ${d.c?'✓':'(обов\'язково)'}</button>${nt?`<button class="chip ${ui.mode==='t'?'s':''}" data-a="mode" data-v="t">🎯 Ціль ${d.t.length}/${nt}${need.mirage?' (дві суміжні)':''}</button>`:''}${need.artemia||g.bonus?`<button class="chip ${ui.mode==='a'?'s':''}" data-a="mode" data-v="a">Ⓐ Артемія ${d.a.length}/${need.artemia}${g.bonus?'–'+(need.artemia+1):''}</button>`:''}</div><div class="btns"><button class="pri" data-a="tokens">Підтвердити полювання</button><button data-a="clr">Скинути розстановку</button></div></div>`}}
+else{const p=g.P[S.me],choosing=g.phase==='recon'&&!my.played.length;
+if(choosing)h+=recon(g,my,p);
+else if(g.phase==='recon')h+=`<div class="sec"><p class="ok">✓ Вибір зроблено. Поки Істота не перейшла до Полювання, локацію можна змінити.</p>${ui.swap?`<h3>Нова локація (${ui.sw.length}/${my.played.length})</h3>${chips(my.hand.concat(my.played).sort((a,b)=>a-b),ui.sw,'swsel')}<div class="btns"><button class="pri" data-a="swok" ${ui.sw.length===my.played.length?'':'disabled'}>Підтвердити зміну</button><button data-a="swcancel">Скасувати</button></div>`:`<div class="btns"><button data-a="swopen">Змінити локацію</button></div>`}</div>`;
+if(my.surv.length){const can=d=>!g.despair&&!my.survPlayed&&(!aw||aw.kind==='window')&&((d.phase===1&&g.phase==='recon')||(d.phase===3&&aw&&aw.kind==='window'));
+h+=`<div class="sec"><h3>Карти Виживання${g.despair?' (Відчай: недоступні)':''}</h3>${cards(my.surv,'SURV','surv','sv','Зіграти',can)}</div>`}
+if(ui.pend&&ui.pend.type==='shoste')h+=`<div class="msg"><b>Шосте відчуття:</b> оберіть ${Math.min(2,p.disc.length)} карти з відбою${chips(p.disc,ui.pend.sel,'psel')}<div class="btns"><button class="pri" data-a="shoste" ${ui.pend.sel.length===Math.min(2,p.disc.length)?'':'disabled'}>Підтвердити</button></div></div>`;
+if(ui.pend&&ui.pend.type==='hybnyi')h+=`<div class="msg"><b>Хибний слід:</b> клікніть сусідню локацію (підсвічено), куди перемістити жетон Істоти.</div>`;
+if(!choosing)h+=`<div class="sec"><h3>Ваша рука</h3>${chips(my.hand,null,'','d')}</div>`}
+return h}
+function recon(g,my,p){const u=ui,disc=p.disc,ok2=disc.length>=2,ok4=disc.length>=4;
+const A=[['none','Без особливих дій'],['resist2','Опір: повернути 2 карти (−1 Воля)',!ok2],['resist4','Опір: повернути 4 карти (−2 Волі)',!ok4],['surrender','Поступитися (Волі й карти назад, Асиміляція +1)']];
+let h=`<div class="sec"><h3>1. Оберіть дію</h3><div class="chips eq">${A.map(a=>`<button class="chip ${u.act===a[0]?'s':''}" data-a="act" data-v="${a[0]}" ${a[2]?'disabled':''}>${a[1]}</button>`).join('')}</div></div>`;
+let hand=my.hand,k=0;
+if(u.act==='resist2'||u.act==='resist4'){k=u.act==='resist2'?2:4;h+=`<div class="sec"><h3>Оберіть ${k} карти з відбою (${u.res.length}/${k})</h3>${chips(disc,u.res,'res')}</div>`;hand=my.hand.concat(u.res)}
+if(u.act==='surrender')hand=my.hand.concat(disc);
+const cnt=Math.min(need(),hand.length);u.play=u.play.filter(c=>hand.includes(c));
+h+=`<div class="sec"><h3>2. Оберіть локацію для розвідки (${u.play.length}/${cnt})${need()===2?' — цього ходу 2 карти; порядок вибору = порядок розрахунку':''}</h3>${chips(hand.slice().sort((a,b)=>a-b),u.play,'play')}</div>`;
+const ready=u.play.length===cnt&&cnt>0&&(!k||u.res.length===k);
+return h+`<div class="btns"><button class="pri" data-a="submit" ${ready?'':'disabled'}>Підтвердити вибір</button></div>`}
+function prompt(a){const p=S.g.P[S.me],K=a.kind,B=(x,t,pri)=>`<button ${pri?'class="pri" ':''}data-a="ans" data-j='${JSON.stringify(x)}'>${t}</button>`;let h='<div class="msg">';
+if(K==='window')return h+`<b>Фаза 3. Карти відкрито.</b><span class="tag">Зіграйте карту Виживання (Хитрість / Хибний слід) або натисніть «Готово».</span><div class="btns"><button class="pri" data-a="ready" ${p.ready?'disabled':''}>Готово</button></div></div>`;
+if(K==='phobia'){const h2=S.my.hand;if(!ui.keep)ui.keep=[];return h+`<b>Фобія!</b><span class="tag">Оберіть 2 карти, які залишаться прихованими. Решту побачить Істота.</span>${chips(h2,ui.keep,'keep')}<div class="btns"><button class="pri" data-a="phobia" ${ui.keep.length===2?'':'disabled'}>Підтвердити</button></div></div>`}
+if(K==='river')return h+`<b>Річка:</b><span class="tag">Оберіть карту, яку розвідуєте. Іншу поверніть в руку.</span>${chips(a.cards,null,'ans-keep')}</div>`;
+if(K==='choose'){const m=S.defs.LOC[a.loc];return h+`<b>Локація «${m[0]}»</b><span class="tag">${esc(m[1])}</span><div class="btns">${a.canEffect?B({t:'effect'},'Активувати ефект',1):''}${B({t:'skip'},'Нічого не робити')}</div>${a.canEffect?'':'<span class="tag">Ефект уже використано цього ходу.</span>'}${a.canReturn?`<span class="tag">Або поверніть 1 карту з відбою:</span>${chips(p.disc,null,'ans-ret')}`:''}</div>`}
+if(K==='lair')return h+`<b>Лігво:</b><div class="btns">${a.canAll?B({m:'all'},'Повернути всі карти з відбою'):''}${a.canCopy?B({m:'copy'},'Скопіювати ефект «'+LN(a.copyLoc)+'»'):''}</div></div>`;
+if(K==='pickret'){if(!ui.pr)ui.pr=[];return h+`<b>Оберіть ${a.n} карт(и) з відбою, щоб повернути в руку:</b>${chips(p.disc,ui.pr,'pr')}<div class="btns"><button class="pri" data-a="prok" ${ui.pr.length===a.n?'':'disabled'}>Підтвердити</button></div></div>`}
+if(K==='rover')return h+`<b>Планетохід:</b><span class="tag">Оберіть карту з резерву.</span>${chips(a.opts,null,'ans-rov')}</div>`;
+if(K==='shelter')return h+`<b>Укриття:</b><span class="tag">Оберіть карту Виживання, яку залишите (другу буде скинуто).</span>${cards(a.cards,'SURV','ans-keepc','sv','Залишити')}</div>`;
+if(K==='spring')return h+`<b>Джерело:</b><span class="tag">Оберіть Астронавта і ефект.</span>${S.g.order.map(id=>`<div class="btns"><b>${esc(nm(id))}</b>${B({target:id,mode:'will'},'+1 Воля')}${B({target:id,mode:'card'},'+1 карта Виживання')}</div>`).join('')}<div class="btns">${B({skip:1},'Нічого не робити')}</div></div>`;
+if(K==='dsurv')return h+`<b>Токсин:</b><span class="tag">Оберіть карту Виживання для скидання.</span>${cards(a.cards,'SURV','ans-ds','sv','Скинути')}</div>`;
+if(K==='dloc')return h+`<b>Артемія:</b><span class="tag">Скиньте карту Локації з руки.</span>${chips(S.my.hand,null,'ans-dl')}</div>`;
+return h+'</div>'}
+function toggle(arr,v,max){const i=arr.indexOf(v);if(i>=0)arr.splice(i,1);else{if(arr.length>=max)arr.shift();arr.push(v)}}
+document.addEventListener('click',async e=>{const b=e.target.closest('[data-a]');if(!b)return;e.preventDefault();const a=b.dataset.a,v=b.dataset.v,n=+v;
+const g=S&&S.g,A=(x,y)=>post('answer',{v:x}),ans=(x)=>{ui.pr=null;ui.keep=null;return post('answer',{v:x})};
+switch(a){
+case'create':case'join':return enter(a==='create'?'create':'join');
+case'copy':$('#lk').select();navigator.clipboard&&navigator.clipboard.writeText($('#lk').value);return toast('Посилання скопійовано');
+case'start':await post('setCreature',{pick:$('#cp').value||null});await post('expert',{v:$('#ex').checked});return post('start');
+case'again':return post('again');
+case'act':ui.act=v;ui.res=[];ui.play=[];return render();
+case'res':toggle(ui.res,n,ui.act==='resist2'?2:4);return render();
+case'play':toggle(ui.play,n,S.my.mode?2:1);return render();
+case'submit':return post('submit',{action:ui.act,resist:ui.res,play:ui.play});
+case'hunt':{const c=S.my.hand.find(x=>x.id===n);if(c.k==='fobia'){ui.pend={type:'fobia',id:n};return render()}return post('playHunt',{id:n})}
+case'fobia':{const id=ui.pend.id;ui.pend=null;return post('playHunt',{id,target:v})}
+case'toHunt':return post('toHunt');
+case'mode':ui.mode=v;return render();
+case'clr':ui.d={c:null,t:[],a:[]};return render();
+case'tile':{if(ui.pend&&ui.pend.type==='hybnyi'){const id=ui.pend.id;ui.pend=null;return post('surv',{id,loc:n})}
+if(S.me===g.cid&&g.phase==='hunt'&&!g.await){const need=g.hunt.need,d=ui.d;
+if(ui.mode==='c')d.c=n;
+else if(ui.mode==='t'){if(!need.target)return toast('Жетон Цілі потрібен лише з картою, що його дає. Спочатку зіграйте карту.');
+ if(!need.mirage)d.t=[n];
+ else if(d.t.length===1&&d.t[0]===n)d.t=[];
+ else if(d.t.length===1){if(!adjc(d.t[0],n))return toast('Оберіть сусідню локацію (по горизонталі або вертикалі) — вони підсвічені.');d.t.push(n)}
+ else d.t=[n]}
+else toggle(d.a,n,need.artemia+(g.bonus?1:0));render()}return}
+case'tokens':return post('tokens',{creature:ui.d.c,target:g.hunt.need.target?ui.d.t:[],artemia:ui.d.a.slice(0,g.hunt.need.artemia+(g.bonus?1:0))});
+case'surv':{const c=S.my.surv.find(x=>x.id===n);if(c.k==='shoste'){const p=g.P[S.me];if(p.disc.length<=2){return post('surv',{id:n,cards:p.disc})}ui.pend={type:'shoste',id:n,sel:[]};return render()}
+if(c.k==='hybnyi'){ui.pend={type:'hybnyi',id:n};return render()}return post('surv',{id:n})}
+case'psel':toggle(ui.pend.sel,n,2);return render();
+case'shoste':{const id=ui.pend.id,cards=ui.pend.sel;ui.pend=null;return post('surv',{id,cards})}
+case'ready':return post('ready');
+case'swopen':ui.swap=true;ui.sw=S.my.played.slice();return render();
+case'swsel':toggle(ui.sw,n,S.my.played.length);return render();
+case'swcancel':ui.swap=false;return render();
+case'swok':{const r=await post('swap',{play:ui.sw});ui.swap=false;return render()}
+case'kick':if(!confirm('Видалити цього гравця з гри?'))return;return post('kick',{target:v});
+case'endready':return post('endready');
+case'leave':if(!confirm('Вийти з гри? Інші гравці продовжать без вас.'))return;await post('leave');return goHome();
+case'close':if(!confirm('Закрити кімнату для всіх гравців? Гру буде завершено остаточно.'))return;await post('close');return goHome();
+case'keep':if(!ui.keep)ui.keep=[];toggle(ui.keep,n,2);return render();
+case'phobia':{const k=ui.keep;ui.keep=null;return post('answer',{v:{keep:k}})}
+case'pr':toggle(ui.pr,n,+(g.await&&g.await.n||2));return render();
+case'prok':{const c=ui.pr;ui.pr=null;return post('answer',{v:{cards:c}})}
+case'ans':return ans(JSON.parse(b.dataset.j));
+case'ans-keep':return ans({keep:n});case'ans-ret':return ans({t:'return',c:n});case'ans-rov':return ans({c:n});
+case'ans-keepc':return ans({keep:n});case'ans-ds':return ans({id:n});case'ans-dl':return ans({c:n});
+}});
+function render(){if(!S)return;S.started?game():lobby()}
+if(ses&&(!qroom()||qroom()===ses.room))connect();else{ses=null;home()}
+</script></body></html>
