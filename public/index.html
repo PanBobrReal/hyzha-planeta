@@ -27,14 +27,23 @@ h3{margin:.2em 0 .5em;font-size:1rem;color:var(--aq)}
 .pl{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px}
 .pc{border:1px solid var(--line);border-radius:10px;padding:8px;background:#0e2a35}.pc.me{border-color:var(--aq)}
 .pip{display:inline-block;width:12px;height:12px;border-radius:50%;background:var(--red);margin-right:3px}.pip.e{background:transparent;border:1px solid var(--red)}
-.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
 .chip{padding:.35em .6em;border-radius:8px;border:1px solid var(--line);background:#0a2530;font-size:.9rem;cursor:pointer;text-align:left}
 .chip.s{border-color:var(--gold);background:#3a3216}.chip.d{cursor:default;color:var(--dim)}
 .cd{border:1px solid var(--vi);background:#241a3a}.cd.h{border-color:var(--red);background:#3a1a24}
-.msg{background:#2a2410;border:1px solid var(--gold);border-radius:10px;padding:10px}
+.msg{background:#2a2410;border:1px solid var(--gold);border-radius:10px;padding:14px;display:grid;gap:12px}
 .log{max-height:220px;overflow:auto;font-size:.88rem;color:var(--dim);display:grid;gap:2px}.log p,.clg p{margin:0}.clg p{color:var(--gold)}
 .tag{font-size:.75rem;color:var(--dim)}.ok{color:var(--aq)}
 #toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--red);color:#2b0710;padding:.6em 1em;border-radius:10px;font-weight:600;display:none;z-index:9;max-width:90vw}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;align-items:stretch}
+.card{display:flex;flex-direction:column;gap:8px;border:1px solid var(--vi);background:#241a3a;border-radius:10px;padding:12px;min-height:140px}
+.card.h{border-color:var(--red);background:#3a1a24}.card.sv{border-color:var(--aq);background:#0f3338}
+.card .ct{display:flex;justify-content:space-between;gap:8px;align-items:baseline}.card .x{flex:1;font-size:.85rem;color:var(--dim)}.card button{align-self:flex-start}
+.btns{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.sec{display:grid;gap:10px}.act{display:grid;gap:16px}
+.banner{border-radius:12px;padding:14px 16px;font-weight:800;font-size:1.15rem;border:2px solid var(--line);background:#0e2a35;color:var(--dim)}
+.banner.me{border-color:var(--aq);background:#0f4a47;color:#fff}.banner small{display:block;font-weight:400;font-size:.88rem;margin-top:2px;color:inherit;opacity:.85}
+details summary{cursor:pointer;color:var(--aq);font-weight:600}details .log{margin-top:8px}.help{display:grid;gap:4px;font-size:.88rem;color:var(--dim);margin-top:8px}
 @media(max-width:700px){.tile small{display:none}.tile{min-height:70px}.trk b{width:5.5em}}
 @media(prefers-reduced-motion:no-preference){.tile{transition:border-color .15s}}
 </style></head><body><div id="app"></div><div id="toast" role="alert"></div>
@@ -57,7 +66,7 @@ $('#app').innerHTML=`<div class="wrap"><h1>ХИЖА ПЛАНЕТА</h1><div clas
 ${host?`<div class="box"><h3>Налаштування</h3><div class="row"><select id="cp"><option value="">Істоту оберемо випадково</option>${S.players.map(p=>`<option value="${p.id}" ${S.creaturePick===p.id?'selected':''}>Істота: ${esc(p.name)}</option>`).join('')}</select></div><p><label><input type="checkbox" id="ex" ${S.expert?'checked':''} style="width:auto"> Авторський варіант для досвідчених (після втрати останньої Волі в Розплаті — лише 2 фішки)</label></p><button class="pri" data-a="start" ${S.players.length<2?'disabled':''}>Почати гру</button></div>`:'<p class="tag">Чекаємо, поки господар кімнати почне гру…</p>'}</div>`}
 const need=()=>S.my.mode?2:1;
 function chips(arr,sel,act,cls=''){return `<div class="chips">${arr.map(c=>`<button class="chip ${sel&&sel.includes(c)?'s':''} ${cls}" data-a="${act}" data-v="${c}" title="${esc(S.defs.LOC[c][1])}">${c}. ${LN(c)}</button>`).join('')}</div>`}
-function cards(arr,def,act,cls,lbl){return `<div class="chips">${arr.map(c=>`<span class="chip d ${cls}" title="${esc(S.defs[def][c.k].text)}"><b>${S.defs[def][c.k].name}</b> <span class="tag">Фаза ${S.defs[def][c.k].phase}</span><br><small>${S.defs[def][c.k].text}</small>${act?`<br><button data-a="${act}" data-v="${c.id}">${lbl}</button>`:''}</span>`).join('')}</div>`}
+function cards(arr,def,act,cls,lbl,can){return `<div class="cards">${arr.map(c=>{const d=S.defs[def][c.k],ok=act&&(!can||can(d));return `<div class="card ${cls}"><div class="ct"><b>${d.name}</b><span class="tag">Фаза ${d.phase}</span></div><div class="x">${d.text}</div>${act?`<button data-a="${act}" data-v="${c.id}" ${ok?'':'disabled'}>${lbl}</button>`:''}</div>`}).join('')}</div>`}
 function bar(cls,val,g){let h='';for(let i=1;i<=g.goal;i++)h+=`<div class="seg ${cls} ${i<=val?'on':''}">${cls==='r'&&g.art.includes(i)?'Ⓐ':i===g.goal?'★':''}</div>`;return h}
 function game(){const g=S.g,my=S.my,isC=S.me===g.cid,key=g.turn+g.phase;
 if(ui.key!==key)ui={key,act:'none',res:[],play:[],pend:null,d:{c:null,t:[],a:[]},mode:'c'};
@@ -66,59 +75,73 @@ const tk=g.tokens||(isC&&g.phase==='hunt'?{creature:ui.d.c,target:ui.d.t,artemia
 let tiles='';for(let n=1;n<=10;n++){const t=[];if(tk){if(tk.creature===n)t.push('👁');if(tk.target&&tk.target.includes(n))t.push('🎯');(tk.artemia||[]).forEach(a=>{if(a===n)t.push('Ⓐ')})}
 if(n===4&&g.transmitter)t.push('📡');
 const sel=ui.pend&&ui.pend.type==='hybnyi'&&g.tokens&&adjc(g.tokens.creature,n);
-tiles+=`<button class="tile ${sel?'sel':''}" data-a="tile" data-v="${n}" title="${esc(S.defs.LOC[n][1])}"><span class="tk">${t.join('')}</span><span class="n">${n}</span><div class="t">${LN(n)}</div><small>${esc(S.defs.LOC[n][1])}</small>${n>=6?`<small>Резерв: ${g.reserve[n]}</small>`:''}</button>`}
+tiles+=`<button class="tile ${sel?'sel':''}" data-a="tile" data-v="${n}" title="${esc(S.defs.LOC[n][1])}"><span class="tk">${t.join('')}</span><span class="n">${n}</span><div class="t">${LN(n)}</div>${n>=6?`<small>Резерв: ${g.reserve[n]}</small>`:''}</button>`}
 const pcs=g.order.map(id=>{const p=g.P[id],i=id===S.me;return `<div class="pc ${i?'me':''}"><b>${esc(nm(id))}</b>${i?' (ви)':''}<br>${[0,1,2].map(k=>`<span class="pip ${k<p.will?'':'e'}"></span>`).join('')} <span class="tag">карт у руці ${p.hand} · Виживання ${p.surv}</span><br><span class="tag">Відбій:</span> ${p.disc.length?p.disc.sort((a,b)=>a-b).map(c=>`<b title="${LN(c)}">${c}</b>`).join(' '):'—'}<br><span class="tag">${g.phase==='recon'?(p.locked?'<span class=ok>✓ обрав'+(p.action==='surrender'?' (поступився)':p.action&&p.action!=='none'?' (опір)':'')+'</span>':'обирає…'):''}${p.played?' Обрано: '+p.played.map(LN).join(' + '):p.n&&g.phase!=='recon'?' Обрано: '+p.n+' карт(и)':''}${p.two&&g.phase==='recon'?' · грає 2 карти':''}</span></div>`}).join('');
 let ctl='';
 if(g.phase==='over'){ctl=`<div class="msg"><h3>${g.over==='astro'?'Астронавтів врятовано! Перемога Астронавтів.':'Планета асимілювала Астронавтів. Перемога Істоти.'}</h3>${S.host===S.me?'<button class="pri" data-a="again">Нова гра (повернутись до лобі)</button>':'<span class="tag">Господар може почати нову гру.</span>'}</div>`}
 else if(aw&&mine)ctl=prompt(aw);
-else if(aw)ctl=`<div class="msg">${aw.kind==='window'?'Астронавти можуть зіграти карти Виживання фази 3. Чекаємо…':'Чекаємо на вибір: <b>'+esc(nm(aw.pid))+'</b>'}</div>`;
+else if(aw)ctl='';
 if(g.phase!=='over'&&!(mine&&aw.kind!=='window'))ctl+=role(isC,g,my,aw);
 $('#app').innerHTML=`<div class="wrap"><div class="top"><div><span class="ph">Хід ${g.turn} · ${PH}</span> <span class="tag">${isC?'Ви — Істота 👁':'Ви — Астронавт · Істота: '+esc(nm(g.cid))}</span></div><span class="tag">Кімната ${S.room}</span></div>
-<div class="box trk"><div class="l"><b>Порятунок ${g.rescue}/${g.goal}</b>${bar('r',g.rescue,g)}</div><div class="l"><b>Асиміляція ${g.assim}/${g.goal}</b>${bar('a',g.assim,g)}</div>${g.bonus&&g.phase!=='over'?'<span class="tag">Порятунок на поділці Артемії: Істота може додатково розмістити жетон Артемії.</span>':''}</div>
-<div class="board">${tiles}</div><div class="box">${ctl}</div><div class="pl">${pcs}</div>
-<div class="box"><h3>Журнал</h3><div class="log" id="lg">${g.log.map(l=>`<p>${esc(l)}</p>`).join('')}</div></div></div>`;
+${banner(g,isC,aw,mine)}<div class="box trk"><div class="l"><b>Порятунок ${g.rescue}/${g.goal}</b>${bar('r',g.rescue,g)}</div><div class="l"><b>Асиміляція ${g.assim}/${g.goal}</b>${bar('a',g.assim,g)}</div>${g.bonus&&g.phase!=='over'?'<span class="tag">Порятунок на поділці Артемії: Істота може додатково розмістити жетон Артемії.</span>':''}</div>
+<div class="board">${tiles}</div><div class="box act">${ctl}</div><div class="pl">${pcs}</div>
+<details class="box" open><summary>Журнал</summary><div class="log" id="lg">${g.log.map(l=>`<p>${esc(l)}</p>`).join('')}</div></details>
+<details class="box"><summary>Довідка по локаціях</summary><div class="help">${Object.keys(S.defs.LOC).map(n=>`<div><b>${n}. ${LN(n)}</b> — ${esc(S.defs.LOC[n][1])}</div>`).join('')}</div></details></div>`;
 const lg=$('#lg');if(lg)lg.scrollTop=1e5}
 const adjc=(a,b)=>a&&Math.abs(((a-1)/5|0)-((b-1)/5|0))+Math.abs((a-1)%5-(b-1)%5)===1;
+function banner(g,isC,aw,mine){
+if(g.phase==='over')return '';
+const P=g.P,w=ids=>ids.map(id=>esc(nm(id))).join(', ');let me=false,t='',s='';
+if(aw&&aw.kind==='window'){const wt=g.order.filter(id=>!P[id].ready);
+ if(!isC&&!P[S.me].ready){me=true;t='Ваш хід: карта Виживання або «Готово»';s='Карти відкрито. Можна зіграти Хитрість / Хибний слід.'}else{t='Астронавти вирішують, чи грати карти Виживання';s='Чекаємо: '+w(wt)}}
+else if(aw&&mine){me=true;t='Ваш хід: зробіть вибір нижче'}
+else if(aw){t='Чекаємо на вибір гравця';s=esc(nm(aw.pid))}
+else if(g.phase==='recon'){const wt=g.order.filter(id=>!P[id].locked);
+ if(isC){if(!wt.length){me=true;t='Ваш хід: усі Астронавти обрали локації';s='Зіграйте карту Фази 1 (за бажанням) або перейдіть до Полювання.'}else{t='Астронавти обирають локації';s='Чекаємо: '+w(wt)}}
+ else if(!P[S.me].locked){me=true;t='Ваш хід: оберіть локацію';s='Усі Астронавти обирають одночасно.'}else{t='Ви обрали локацію';s='Чекаємо: '+w(wt)}}
+else if(g.phase==='hunt'){if(isC){me=true;t='Ваш хід: полювання';s='Зіграйте карту (за бажанням) і розставте жетони на полі.'}else{t='Істота полює';s='Чекаємо на її жетони.'}}
+else t='Розплата…';
+return `<div class="banner ${me?'me':''}" role="status">${t}${s?`<small>${s}</small>`:''}</div>`}
 function role(isC,g,my,aw){let h='';
-if(isC){const need=g.hunt.need;
-h+=`<h3>Ваші карти Полювання (в колоді ${g.hunt.deck})</h3>${cards(my.hand,'HUNT',aw?'':'hunt','h','Зіграти')}`;
-if(ui.pend&&ui.pend.type==='fobia')h+=`<p>Фобія: оберіть Астронавта</p><div class="chips">${g.order.map(id=>`<button class="chip" data-a="fobia" data-v="${id}">${esc(nm(id))}</button>`).join('')}</div>`;
-if(my.clog.length)h+=`<div class="clg"><h3>Розвідані дані (бачите лише ви)</h3>${my.clog.map(l=>`<p>${esc(l)}</p>`).join('')}</div>`;
-if(g.phase==='recon')h+=`<p><button class="pri" data-a="toHunt" ${g.order.every(id=>g.P[id].locked)&&!aw?'':'disabled'}>Перейти до Полювання</button> <span class="tag">${g.order.every(id=>g.P[id].locked)?'Усі Астронавти обрали локації.':'Чекаємо, поки Астронавти оберуть локації. Тут можна зіграти карту Фази 1.'}</span></p>`;
+if(isC){const need=g.hunt.need,all=g.order.every(id=>g.P[id].locked);
+const can=d=>!aw&&((d.phase===1&&g.phase==='recon')||(d.phase===2&&g.phase==='hunt'))&&g.hunt.played.length<1;
+h+=`<div class="sec"><h3>Ваші карти Полювання (в колоді ще ${g.hunt.deck})</h3>${cards(my.hand,'HUNT','hunt','h','Зіграти',can)}</div>`;
+if(ui.pend&&ui.pend.type==='fobia')h+=`<div class="msg"><b>Фобія:</b> оберіть Астронавта<div class="btns">${g.order.map(id=>`<button data-a="fobia" data-v="${id}">${esc(nm(id))}</button>`).join('')}</div></div>`;
+if(my.clog.length)h+=`<div class="sec clg"><h3>Розвідані дані (бачите лише ви)</h3>${my.clog.map(l=>`<p>${esc(l)}</p>`).join('')}</div>`;
+if(g.phase==='recon')h+=`<div class="btns"><button class="pri" data-a="toHunt" ${all&&!aw?'':'disabled'}>Перейти до Полювання</button></div>`;
 if(g.phase==='hunt'&&!aw){const d=ui.d,nt=need.target?(need.mirage?2:1):0;
-h+=`<h3>Розмістіть жетони, клікаючи по локаціях</h3><div class="chips"><button class="chip ${ui.mode==='c'?'s':''}" data-a="mode" data-v="c">👁 Істота ${d.c?'✓':''}</button>${nt?`<button class="chip ${ui.mode==='t'?'s':''}" data-a="mode" data-v="t">🎯 Ціль ${d.t.length}/${nt}${need.mirage?' (дві суміжні)':''}</button>`:''}${need.artemia||g.bonus?`<button class="chip ${ui.mode==='a'?'s':''}" data-a="mode" data-v="a">Ⓐ Артемія ${d.a.length}/${need.artemia}${g.bonus?'–'+(need.artemia+1):''}</button>`:''}</div><p><button class="pri" data-a="tokens">Підтвердити полювання</button> <span class="tag">Жетон Істоти обов'язковий. Очищення: <a href="#" data-a="clr">скинути розстановку</a></span></p>`}}
-else{const p=g.P[S.me];
-h+=`<h3>Ваша Воля: ${[0,1,2].map(k=>`<span class="pip ${k<p.will?'':'e'}"></span>`).join('')}</h3>`;
-if(g.phase==='recon'&&!my.played.length)h+=recon(g,my,p);
-else if(my.played.length&&g.phase==='recon')h+=`<p class="ok">✓ Вибір зроблено. Чекаємо інших…</p>`;
-h+=`<h3>Ваші карти Виживання</h3>`+(my.surv.length?cards(my.surv,'SURV',(!g.despair&&!my.survPlayed&&!aw||(aw&&aw.kind==='window'&&!g.despair&&!my.survPlayed))?'surv':'','cd','Зіграти'):'<p class="tag">Немає</p>');
-if(g.despair)h+='<p class="tag">Відчай: карти Виживання зараз недоступні.</p>';
-if(ui.pend&&ui.pend.type==='shoste')h+=`<div class="msg"><b>Шосте відчуття:</b> оберіть ${Math.min(2,p.disc.length)} карти з відбою<br>${chips(p.disc,ui.pend.sel,'psel')}<button class="pri" data-a="shoste" ${ui.pend.sel.length===Math.min(2,p.disc.length)?'':'disabled'}>Підтвердити</button></div>`;
-if(ui.pend&&ui.pend.type==='hybnyi')h+=`<div class="msg"><b>Хибний слід:</b> клікніть сусідню локацію, куди перемістити жетон Істоти.</div>`;
-h+=`<h3>Ваша рука</h3>${chips(my.hand,null,'','d')}`}
+h+=`<div class="sec"><h3>Розставте жетони: оберіть жетон, потім клікніть локацію на полі</h3><div class="btns"><button class="chip ${ui.mode==='c'?'s':''}" data-a="mode" data-v="c">👁 Істота ${d.c?'✓':'(обов\'язково)'}</button>${nt?`<button class="chip ${ui.mode==='t'?'s':''}" data-a="mode" data-v="t">🎯 Ціль ${d.t.length}/${nt}${need.mirage?' (дві суміжні)':''}</button>`:''}${need.artemia||g.bonus?`<button class="chip ${ui.mode==='a'?'s':''}" data-a="mode" data-v="a">Ⓐ Артемія ${d.a.length}/${need.artemia}${g.bonus?'–'+(need.artemia+1):''}</button>`:''}</div><div class="btns"><button class="pri" data-a="tokens">Підтвердити полювання</button><button data-a="clr">Скинути розстановку</button></div></div>`}}
+else{const p=g.P[S.me],choosing=g.phase==='recon'&&!my.played.length;
+if(choosing)h+=recon(g,my,p);
+else if(g.phase==='recon')h+=`<p class="ok">✓ Вибір зроблено.</p>`;
+if(my.surv.length){const can=d=>!g.despair&&!my.survPlayed&&(!aw||aw.kind==='window')&&((d.phase===1&&g.phase==='recon')||(d.phase===3&&aw&&aw.kind==='window'));
+h+=`<div class="sec"><h3>Карти Виживання${g.despair?' (Відчай: недоступні)':''}</h3>${cards(my.surv,'SURV','surv','sv','Зіграти',can)}</div>`}
+if(ui.pend&&ui.pend.type==='shoste')h+=`<div class="msg"><b>Шосте відчуття:</b> оберіть ${Math.min(2,p.disc.length)} карти з відбою${chips(p.disc,ui.pend.sel,'psel')}<div class="btns"><button class="pri" data-a="shoste" ${ui.pend.sel.length===Math.min(2,p.disc.length)?'':'disabled'}>Підтвердити</button></div></div>`;
+if(ui.pend&&ui.pend.type==='hybnyi')h+=`<div class="msg"><b>Хибний слід:</b> клікніть сусідню локацію (підсвічено), куди перемістити жетон Істоти.</div>`;
+if(!choosing)h+=`<div class="sec"><h3>Ваша рука</h3>${chips(my.hand,null,'','d')}</div>`}
 return h}
 function recon(g,my,p){const u=ui,disc=p.disc,ok2=disc.length>=2,ok4=disc.length>=4;
-const A=[['none','Без особливих дій'],['resist2','Опір: повернути 2 карти (−1 Воля)',!ok2],['resist4','Опір: повернути 4 карти (−2 Волі)',!ok4],['surrender','Поступитися (всі Волі й карти назад, але Асиміляція +1)']];
-let h=`<h3>Фаза 1. Оберіть дію та локацію${need()===2?' — цього ходу потрібно зіграти 2 карти (порядок вибору = порядок розрахунку)':''}</h3><div class="chips">${A.map(a=>`<button class="chip ${u.act===a[0]?'s':''}" data-a="act" data-v="${a[0]}" ${a[2]?'disabled':''}>${a[1]}</button>`).join('')}</div>`;
+const A=[['none','Без особливих дій'],['resist2','Опір: повернути 2 карти (−1 Воля)',!ok2],['resist4','Опір: повернути 4 карти (−2 Волі)',!ok4],['surrender','Поступитися (Волі й карти назад, Асиміляція +1)']];
+let h=`<div class="sec"><h3>1. Оберіть дію</h3><div class="chips">${A.map(a=>`<button class="chip ${u.act===a[0]?'s':''}" data-a="act" data-v="${a[0]}" ${a[2]?'disabled':''}>${a[1]}</button>`).join('')}</div></div>`;
 let hand=my.hand,k=0;
-if(u.act==='resist2'||u.act==='resist4'){k=u.act==='resist2'?2:4;h+=`<p>Оберіть ${k} карти з відбою (${u.res.length}/${k}):</p>${chips(disc,u.res,'res')}`;hand=my.hand.concat(u.res)}
+if(u.act==='resist2'||u.act==='resist4'){k=u.act==='resist2'?2:4;h+=`<div class="sec"><h3>Оберіть ${k} карти з відбою (${u.res.length}/${k})</h3>${chips(disc,u.res,'res')}</div>`;hand=my.hand.concat(u.res)}
 if(u.act==='surrender')hand=my.hand.concat(disc);
 const cnt=Math.min(need(),hand.length);u.play=u.play.filter(c=>hand.includes(c));
-h+=`<p>Локація для розвідки (${u.play.length}/${cnt}):</p>${chips(hand.slice().sort((a,b)=>a-b),u.play,'play')}`;
+h+=`<div class="sec"><h3>2. Оберіть локацію для розвідки (${u.play.length}/${cnt})${need()===2?' — цього ходу 2 карти; порядок вибору = порядок розрахунку':''}</h3>${chips(hand.slice().sort((a,b)=>a-b),u.play,'play')}</div>`;
 const ready=u.play.length===cnt&&cnt>0&&(!k||u.res.length===k);
-return h+`<p><button class="pri" data-a="submit" ${ready?'':'disabled'}>Підтвердити вибір</button> <span class="tag">Можна обговорювати вголос, але не показувати карти одне одному.</span></p>`}
-function prompt(a){const p=S.g.P[S.me],K=a.kind;let h='<div class="msg">';
-if(K==='window')return h+`<b>Фаза 3.</b> Карти відкрито. Зіграйте карту Виживання (Хитрість / Хибний слід) або натисніть «Готово».<br><button class="pri" data-a="ready" ${p.ready?'disabled':''}>Готово</button></div>`;
-if(K==='phobia'){const h2=S.my.hand;if(!ui.keep)ui.keep=[];return h+`<b>Фобія!</b> Оберіть 2 карти, які залишаться прихованими. Решту побачить Істота.<br>${chips(h2,ui.keep,'keep')}<button class="pri" data-a="phobia" ${ui.keep.length===2?'':'disabled'}>Підтвердити</button></div>`}
-if(K==='river')return h+`<b>Річка:</b> оберіть карту, яку розвідуєте. Іншу поверніть в руку.<br>${chips(a.cards,null,'ans-keep')}</div>`;
-if(K==='choose'){const m=S.defs.LOC[a.loc];return h+`<b>Локація «${m[0]}»:</b> ${esc(m[1])}<br>${a.canEffect?`<button class="pri" data-a="ans" data-j='{"t":"effect"}'>Активувати ефект</button> `:'<span class="tag">Ефект зараз недоступний (уже використано цього ходу). </span>'}${a.canReturn?`або повернути 1 карту з відбою:${chips(p.disc,null,'ans-ret')}`:''}<br><button data-a="ans" data-j='{"t":"skip"}'>Нічого не робити</button></div>`}
-if(K==='lair')return h+`<b>Лігво:</b><br>${a.canAll?`<button data-a="ans" data-j='{"m":"all"}'>Повернути всі карти з відбою</button> `:''}${a.canCopy?`<button data-a="ans" data-j='{"m":"copy"}'>Скопіювати ефект «${LN(a.copyLoc)}»</button>`:''}</div>`;
-if(K==='pickret'){if(!ui.pr)ui.pr=[];return h+`<b>Оберіть ${a.n} карт(и) з відбою, щоб повернути в руку:</b><br>${chips(p.disc,ui.pr,'pr')}<button class="pri" data-a="prok" data-n="${a.n}" ${ui.pr.length===a.n?'':'disabled'}>Підтвердити</button></div>`}
-if(K==='rover')return h+`<b>Планетохід:</b> оберіть карту з резерву.<br>${chips(a.opts,null,'ans-rov')}</div>`;
-if(K==='shelter')return h+`<b>Укриття:</b> оберіть карту Виживання, яку залишите (друга буде скинута).<br>${cards(a.cards,'SURV','ans-keepc','cd','Залишити')}</div>`;
-if(K==='spring')return h+`<b>Джерело:</b> оберіть Астронавта і ефект.<br>${S.g.order.map(id=>`<div class="row"><b>${esc(nm(id))}</b><button data-a="ans" data-j='{"target":"${id}","mode":"will"}'>+1 Воля</button><button data-a="ans" data-j='{"target":"${id}","mode":"card"}'>+1 карта Виживання</button></div>`).join('')}<button data-a="ans" data-j='{"skip":1}'>Нічого не робити</button></div>`;
-if(K==='dsurv')return h+`<b>Токсин:</b> оберіть карту Виживання для скидання.<br>${cards(a.cards,'SURV','ans-ds','cd','Скинути')}</div>`;
-if(K==='dloc')return h+`<b>Артемія:</b> скиньте карту Локації з руки.<br>${chips(S.my.hand,null,'ans-dl')}</div>`;
+return h+`<div class="btns"><button class="pri" data-a="submit" ${ready?'':'disabled'}>Підтвердити вибір</button><span class="tag">Обговорювати можна вголос, показувати карти не можна.</span></div>`}
+function prompt(a){const p=S.g.P[S.me],K=a.kind,B=(x,t,pri)=>`<button ${pri?'class="pri" ':''}data-a="ans" data-j='${JSON.stringify(x)}'>${t}</button>`;let h='<div class="msg">';
+if(K==='window')return h+`<b>Фаза 3. Карти відкрито.</b><span class="tag">Зіграйте карту Виживання (Хитрість / Хибний слід) або натисніть «Готово».</span><div class="btns"><button class="pri" data-a="ready" ${p.ready?'disabled':''}>Готово</button></div></div>`;
+if(K==='phobia'){const h2=S.my.hand;if(!ui.keep)ui.keep=[];return h+`<b>Фобія!</b><span class="tag">Оберіть 2 карти, які залишаться прихованими. Решту побачить Істота.</span>${chips(h2,ui.keep,'keep')}<div class="btns"><button class="pri" data-a="phobia" ${ui.keep.length===2?'':'disabled'}>Підтвердити</button></div></div>`}
+if(K==='river')return h+`<b>Річка:</b><span class="tag">Оберіть карту, яку розвідуєте. Іншу поверніть в руку.</span>${chips(a.cards,null,'ans-keep')}</div>`;
+if(K==='choose'){const m=S.defs.LOC[a.loc];return h+`<b>Локація «${m[0]}»</b><span class="tag">${esc(m[1])}</span><div class="btns">${a.canEffect?B({t:'effect'},'Активувати ефект',1):''}${B({t:'skip'},'Нічого не робити')}</div>${a.canEffect?'':'<span class="tag">Ефект уже використано цього ходу.</span>'}${a.canReturn?`<span class="tag">Або поверніть 1 карту з відбою:</span>${chips(p.disc,null,'ans-ret')}`:''}</div>`}
+if(K==='lair')return h+`<b>Лігво:</b><div class="btns">${a.canAll?B({m:'all'},'Повернути всі карти з відбою'):''}${a.canCopy?B({m:'copy'},'Скопіювати ефект «'+LN(a.copyLoc)+'»'):''}</div></div>`;
+if(K==='pickret'){if(!ui.pr)ui.pr=[];return h+`<b>Оберіть ${a.n} карт(и) з відбою, щоб повернути в руку:</b>${chips(p.disc,ui.pr,'pr')}<div class="btns"><button class="pri" data-a="prok" ${ui.pr.length===a.n?'':'disabled'}>Підтвердити</button></div></div>`}
+if(K==='rover')return h+`<b>Планетохід:</b><span class="tag">Оберіть карту з резерву.</span>${chips(a.opts,null,'ans-rov')}</div>`;
+if(K==='shelter')return h+`<b>Укриття:</b><span class="tag">Оберіть карту Виживання, яку залишите (другу буде скинуто).</span>${cards(a.cards,'SURV','ans-keepc','sv','Залишити')}</div>`;
+if(K==='spring')return h+`<b>Джерело:</b><span class="tag">Оберіть Астронавта і ефект.</span>${S.g.order.map(id=>`<div class="btns"><b>${esc(nm(id))}</b>${B({target:id,mode:'will'},'+1 Воля')}${B({target:id,mode:'card'},'+1 карта Виживання')}</div>`).join('')}<div class="btns">${B({skip:1},'Нічого не робити')}</div></div>`;
+if(K==='dsurv')return h+`<b>Токсин:</b><span class="tag">Оберіть карту Виживання для скидання.</span>${cards(a.cards,'SURV','ans-ds','sv','Скинути')}</div>`;
+if(K==='dloc')return h+`<b>Артемія:</b><span class="tag">Скиньте карту Локації з руки.</span>${chips(S.my.hand,null,'ans-dl')}</div>`;
 return h+'</div>'}
 function toggle(arr,v,max){const i=arr.indexOf(v);if(i>=0)arr.splice(i,1);else{if(arr.length>=max)arr.shift();arr.push(v)}}
 document.addEventListener('click',async e=>{const b=e.target.closest('[data-a]');if(!b)return;e.preventDefault();const a=b.dataset.a,v=b.dataset.v,n=+v;
